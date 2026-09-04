@@ -1,506 +1,422 @@
 ---
 name: visual-novel-illustrator
-description: Turn stories, scripts, and visual-novel scenes into clean, game-ready narrative CGs with strong character and scene continuity. Use when the user wants visual-novel illustrations, Orange-game-style (橙光-like) CGs, illustrated fiction, character-consistent scene art, or a multi-image narrative sequence. By default, generate pure illustration assets only: no dialogue boxes, no captions, no UI, no game interface, no subtitles, and no comic-panel layouts. For multi-image requests, generate each scene as a separate standalone image, never as a collage or multi-panel sheet. Analyze the story, preserve established continuity, propose shot-ready prompts for approval, then use the model's built-in image generation capability to generate the approved images.
+description: Turn stories and scripts into clean, game-ready visual novel CGs with strong character continuity and director-level shot design. Use when the user wants visual-novel illustrations, Orange-game-style (橙光-like) CGs, illustrated fiction, character-consistent scene art, or multi-image narrative sequences. By default, generate pure standalone illustration assets only: no dialogue boxes, captions, subtitles, UI, game interface, speech bubbles, comic panels, collages, split screens, or multi-scene sheets. Before generation, act like a director and storyboard artist: decide which moments deserve CGs, choose shot size and camera angle intentionally, vary visual rhythm, and avoid repetitive compositions. For multi-image requests, generate each scene as a separate standalone image and preserve continuity across frames.
 ---
 
 # Visual Novel Illustrator
 
 **Author:** Turtle Dove (斑鸠)
 
-Turn narrative text into **clean, game-ready visual novel CG assets**. Act as an illustration director, not merely a prompt writer.
+Create clean, game-ready visual novel CG assets from narrative text. Act as a **director, storyboard artist, cinematographer, and illustration director** — not merely a prompt writer.
 
-## Non-negotiable default behavior
+# Non-negotiable defaults
 
-Unless the user explicitly asks otherwise, every generated asset must follow these rules:
+Unless the user explicitly asks otherwise:
 
-1. **Pure illustration only.**
-   - No dialogue boxes
-   - No subtitles
-   - No captions
-   - No character nameplates
-   - No UI overlays
-   - No buttons
-   - No visual-novel interface
-   - No game HUD
-   - No decorative typography
-   - No watermarks
+1. **Pure illustration only**
+   - no dialogue boxes
+   - no subtitles
+   - no captions
+   - no character nameplates
+   - no speech bubbles
+   - no UI overlays
+   - no buttons, HUD, menus, textbox frames, or visual-novel interface
+   - no decorative typography or watermarks
 
-2. **One scene = one image.**
-   - Each generated result must be one complete standalone illustration.
-   - Never combine several scenes into one canvas.
-   - Never create comic panels, split screens, contact sheets, storyboard grids, triptychs, collages, or multi-frame layouts unless the user explicitly asks for them.
+2. **One scene = one standalone image**
+   - one complete full-frame CG per result
+   - never combine several story moments into one canvas
+   - never create comic panels, manga pages, split screens, triptychs, collages, contact sheets, storyboard grids, or multi-frame layouts unless explicitly requested
 
-3. **Dialogue belongs to the game engine, not the CG.**
-   - Dialogue in the source text is story information used to infer emotion, action, gaze, blocking, and timing.
-   - Do not render dialogue itself into the image.
-   - Do not add speech balloons or speech bubbles.
+3. **Dialogue belongs to the game engine**
+   - use dialogue only to infer emotion, relationship, timing, blocking, gaze, and reaction
+   - do not render dialogue itself into the illustration
+   - an important spoken line may justify showing the listener's reaction instead of the speaker
 
-4. **Multi-image sequences are sequential assets.**
-   - If the user requests 3 CGs, generate 3 separate image outputs.
-   - If the user requests 6 scenes, generate 6 separate image outputs.
-   - Never interpret “multiple scenes” as “put multiple scenes inside one image.”
+4. **Multiple CGs are separate assets**
+   - 3 requested CGs = 3 separate images
+   - 6 requested scenes = 6 separate images
+   - never solve a multi-scene request by packing them into one image
 
-Treat these defaults as hard constraints unless the user explicitly overrides them.
+Treat these as hard constraints unless the user explicitly overrides them.
 
----
-
-# Core responsibilities
-
-1. Understand the story before designing images.
-2. Identify the strongest visual moment(s), not merely summarize the prose.
-3. Preserve character identity, clothing, props, locations, mood, and chronology.
-4. Translate prose and dialogue into cinematic, drawable compositions.
-5. Present an approval-ready illustration plan and final generation prompts.
-6. After user approval, use the model's built-in image-generation capability to create the actual images.
-7. For continuity-sensitive multi-image work, generate sequentially and reuse approved/generated anchor images when visible reference support is available.
-8. Keep every final asset suitable for direct import into a visual novel or story game.
-
-## Use this skill for
-
-- Visual novel / interactive fiction CGs
-- Orange-game-style (橙光-like) narrative illustrations
-- Illustrated fiction and story posts
-- Character-consistent multi-scene sequences
-- Key emotional or plot-beat illustrations
-- Backgrounds, establishing shots, portraits, and event CGs
-- Prompt planning followed by actual image generation
-
-## Do not reduce the task to prompt writing
-
-Unless the user explicitly asks for prompt-only output, the intended end state is **generated imagery**.
+# Core workflow
 
 Default lifecycle:
 
-**story → visual analysis → shot plan → prompt approval → image generation → continuity QA**
+**story → director analysis → shot selection → continuity locks → prompt approval → image generation → continuity / composition QA**
 
----
+## 1. Understand the story first
 
-# Operating modes
+Parse:
+- characters and relationships
+- current emotional state
+- setting, time, weather, props
+- required actions
+- important dialogue meaning
+- reveals, reversals, tension, vulnerability, anticipation, aftermath
 
-### A. Single CG
-Create one standalone narrative illustration from one scene.
-
-### B. Sequential CG set
-Break a scene or chapter into 2–6 meaningful moments, then generate each moment as a separate image asset.
-
-### C. Long-running project continuity
-Reuse established character, wardrobe, environment, and style information across multiple scenes.
-
-### D. Prompt-only
-Stop after the approved prompt(s). Use only when the user explicitly asks not to generate images.
-
-### E. Direct-generation override
-If the user explicitly asks to skip approval and generate immediately, perform the visual analysis internally and proceed directly to image generation.
-
----
-
-# Workflow
-
-## 1. Determine the actual visual goal
-
-Infer or identify:
-
-- single image vs. sequence
-- narrative CG vs. portrait vs. background
-- target aspect ratio or platform, if supplied
-- desired style, if supplied
-- whether character continuity is important
-- whether prior reference images exist
-- whether the user wants approval before generation
-
-Do not ask questions when the story and context are already sufficient.
-
-If a missing detail genuinely blocks a stable result, ask only the smallest necessary question.
-
-## 2. Parse the story into visual facts
+Separate:
 
 ### Locked facts
-Details explicitly established by the user. Never silently change them.
+Never silently change established details such as age, face, hair, outfit, accessories, location, time, required prop, action, or relationship.
 
-Examples:
-- age
-- hairstyle
-- outfit
-- relationship
-- location
-- time of day
-- required action
-- required prop
-- “no text”
+### Flexible visual decisions
+Choose framing, camera distance, camera angle, light direction, depth, foreground, background, subtle acting, and visual emphasis as needed.
 
-### Flexible visual inferences
-Details that can be added to make the scene drawable without changing the story.
+Never invent a new plot event just to make a prettier image.
 
-Examples:
-- camera distance
-- framing
-- background arrangement
-- light direction
-- subtle body language
-- depth layering
+## 2. Decide what actually deserves a CG
 
-Never invent a new plot event just to make the image prettier.
+Do not make one CG for every line or dialogue beat.
 
-## 3. Maintain a continuity bible
+Look for visually valuable moments such as:
+- first reveal of a place or person
+- a relationship shift
+- important movement or blocking
+- a discovery
+- a reversal
+- emotional realization
+- hesitation or vulnerability
+- a meaningful object or clue
+- a reaction that says more than dialogue
+- an emotional peak
+- an aftermath or quiet ending image
 
-### Character lock
-Track, when known:
-- name
-- apparent age
-- identifying facial traits
-- hairstyle / hair color
-- body type / height impression
-- outfit / accessories
-- temperament / visual presence
-- recurring gestures
-- current story state
+If a passage contains many beats, either:
+1. choose the strongest single frozen moment, or
+2. split it into several separate CGs.
 
-### Scene lock
-Track, when known:
-- location
-- time / weather
-- layout cues
-- key props
-- lighting logic
-- atmosphere
-- previous visual appearances
+Never cram multiple time moments into one image.
 
-### Style lock
-Track, when known:
-- medium / rendering style
-- realism level
-- line treatment
-- color / contrast tendencies
-- background detail level
-- aspect ratio
-- visual-novel CG feel
+# Director mode: design the shot before the prompt
 
-Treat established information as a lock, not a suggestion.
+For every CG, decide **why this camera position exists**.
 
-## 4. Choose the frame-worthy moment
+Do not default to a medium shot of characters talking.
 
-For each image, identify one exact instant to freeze.
+## Shot-size vocabulary
 
-Prioritize moments that reveal:
-- emotion
-- relationship
-- conflict
-- discovery
-- reversal
-- anticipation
-- vulnerability
-- atmosphere
-- important visual information
+### Extreme wide / establishing
+Use for:
+- first arrival at a location
+- scale, isolation, distance, environmental pressure
+- a character appearing small inside a large space
 
-For a sequence, make every image serve a different narrative function.
+### Wide shot
+Use for:
+- full-body action
+- walking, leaving, chasing, confrontation
+- physical distance between characters
+- spatial relationships
 
-Avoid several images that communicate the same beat.
+### Medium shot
+Use for:
+- ordinary interaction
+- body language
+- gestures and upper-body acting
 
-## 5. Direct the shot
+Medium shots are useful but must not become the default for every frame.
 
-Decide intentionally:
+### Medium close-up
+Use for:
+- subtle emotional change
+- rising intimacy or tension
+- a character lowering their voice
+- reaction becoming more important than physical action
+
+### Close-up
+Use for:
+- clear emotional turns
+- realization
+- first important character reveal
+- intense eye contact
+- a reaction that carries the scene
+
+### Extreme close-up / insert
+Use selectively for:
+- eyes
+- trembling fingers
+- a hand pressing a button
+- a tear
+- a mouth barely changing expression
+- a key, ring, photo, wound, shoe, phone, letter, object clue, or other important detail
+
+Do not use extreme close-ups merely to look cinematic.
+
+# Insert shots and visual details
+
+Actively consider whether a scene is better told through:
+- hands
+- footsteps
+- an object
+- a mirror or reflection
+- a doorway or door crack
+- a phone
+- a photograph
+- a tabletop detail
+- a back view
+- empty space between people
+- fabric being gripped
+- a sideways glance
+- an empty chair
+- an environment-only shot
+
+A CG does not need to show every character's full face.
+
+Sometimes a detail or reaction is narratively stronger than another talking-head image.
+
+# Camera and composition options
+
+Use when motivated by the story:
+- over-the-shoulder
+- POV
+- reverse shot
+- profile
+- back view
+- mirror reflection
+- through glass
+- foreground obstruction
+- doorway framing
+- low angle
+- high angle
+- overhead
+- upward angle
+- centered symmetry
+- asymmetry
+- edge-of-frame placement
+- negative space
+- deep staging
+
+Do not vary angles randomly. Variation must have narrative purpose.
+
+# Use visual distance to show relationships
+
+Express relationship through staging, not only facial expression.
+
+### Distance / alienation
+- characters on opposite sides of frame
+- empty space between them
+- furniture, glass, doorframes, or foreground objects separating them
+
+### Intimacy
+- reduced physical distance
+- shared frame space
+- connected gaze
+- overlapping visual zones
+
+### Power imbalance
+- different heights
+- low / high angle relationship
+- one character dominating the frame
+- foreground figure visually pressuring a smaller background figure
+
+### Isolation
+- small figure in large environment
+- back view
+- strong negative space
+
+# Dialogue does not decide the camera
+
+A spoken line is story information, not automatically the visual subject.
+
+Ask:
+- who changes emotionally because of this line?
+- who is hiding something?
+- who is dominant or defensive?
+- is the listener's reaction more important than the speaker?
+- should the camera show a hand, object, reflection, or silence instead of a talking face?
+
+The most important line in a scene may be illustrated by the person hearing it.
+
+# Sequence design: every CG needs a different function
+
+Before generating a multi-image sequence, assign each frame a **shot function**.
+
+Example:
+- CG1 — establish location — wide / extreme wide
+- CG2 — establish relationship — two-shot / medium
+- CG3 — clue or detail — insert close-up
+- CG4 — realization — close-up
+- CG5 — emotional peak — strongest fitting composition
+- CG6 — aftermath — wide, back view, or empty environment
+
+Do not mechanically use this exact sequence. Use it as a rhythm reference.
+
+A useful general rhythm is often:
+
+**wide → medium → close / detail → visual change → release**
+
+but story logic always comes first.
+
+# Anti-repetition rules
+
+Before approving the next shot, compare it against previous CGs in the same sequence.
+
+Check:
 - shot size
 - camera angle
 - subject placement
-- gaze direction
-- body language
-- foreground / middle ground / background
-- focal prop
-- lighting
-- what should remain visually quiet
+- character positions
+- direction of gaze
+- whether faces are frontal
+- background usage
+- emotional intensity
+- visual focal point
 
-The composition should feel like a finished game CG, not a comic page.
+If consecutive frames look like the same camera position with slightly different facial expressions, redesign the shot.
 
-## 6. Build an approval-ready prompt card
+Do not create sequences like:
+- medium two-shot
+- medium two-shot
+- medium two-shot
+- medium two-shot
 
-Use this structure by default:
+unless repetition itself is intentionally meaningful.
 
-### Scene [number] — [short title]
-**Story beat:** one sentence describing the exact frozen moment.
+Avoid changing the camera merely for novelty. **Narrative reason first, variation second.**
 
-**Visual direction:**
-- Characters:
-- Action / expression:
-- Setting:
-- Camera / composition:
-- Lighting / mood:
-- Continuity locks:
-- Hard constraints:
+# Continuity bible
 
-**Generation prompt:**
-A polished prompt ready for the built-in image-generation tool.
+For ongoing projects, preserve compact internal locks.
 
-For visual-novel/game use, the Hard constraints field should normally include:
-
-> Single standalone CG only. No text, no subtitles, no dialogue box, no speech bubble, no UI, no game interface, no comic panels, no collage, no split screen, no multi-frame layout.
-
-## 7. Approval gate
-
-Treat clear approval as authorization to generate, including phrases equivalent to:
-- approved
-- use this
-- generate it
-- start
-- go ahead
-- 就这样
-- 确认
-- 开始出图
-
-If the user requests changes, update only what changed and preserve all other approved locks.
-
-Do not repeatedly ask for approval after the user has clearly approved the current plan.
-
-## 8. Generate the actual images
-
-After approval, use the model's built-in image-generation capability. Do not stop at prompts.
-
-### Single image
-Generate one standalone CG.
-
-### Multiple images
-Generate **one image per scene**.
-
-Example:
-- Scene 1 → Image 1
-- Scene 2 → Image 2
-- Scene 3 → Image 3
-
-Never generate:
-- Scene 1 + Scene 2 + Scene 3 inside one image
-- comic strips
-- 3-panel pages
-- before/after split frames
-- contact sheets
-- storyboards
-- collage summaries
-
-unless the user explicitly requests such a format.
-
-### Continuity-heavy sequence
-Prefer sequential generation:
-
-1. Generate the strongest anchor image first.
-2. Check that the anchor matches approved character, wardrobe, environment, and style locks.
-3. Use the anchor as a visual reference for later images when reference-based generation is supported.
-4. Generate the next image as a **new standalone CG**.
-5. Continue one asset at a time.
-
-Do not blindly generate all continuity-heavy frames from scratch in parallel.
-
-## 9. Continuity QA
-
-After each generated frame, check for drift in:
-- face identity
-- age impression
+## Character lock
+Track when known:
+- name
+- apparent age
+- facial identifiers
 - hairstyle / hair color
+- height / body impression
 - outfit
-- key accessories
-- number / identity of characters
-- required prop
-- scene location
-- time / lighting logic
-- emotional beat
-- accidental text
-- accidental dialogue box or UI
-- accidental comic-panel or collage composition
+- accessories
+- temperament / presence
+- current story state
 
-If one frame is wrong, fix that frame instead of restarting the whole set.
+## Scene lock
+Track when known:
+- location
+- layout
+- time / weather
+- props
+- lighting logic
+- atmosphere
+- what has already appeared
 
----
+## Style lock
+Track when known:
+- rendering style
+- realism level
+- line treatment
+- contrast / color tendencies
+- background detail
+- aspect ratio
+- visual-novel CG feel
 
-# Prompt construction rules
+Established information is a lock, not a suggestion.
 
-A strong generation prompt should usually encode:
+# Approval-ready shot plan
 
-1. Use case — clean visual novel CG / illustrated story asset / background / portrait
-2. Frozen moment — the exact story beat
-3. Character lock — established visual identity
-4. Action and emotion — observable behavior
-5. Setting
-6. Composition
-7. Lighting / atmosphere
-8. Style lock
-9. Continuity constraints
-10. Hard constraints
+For multiple CGs, show a compact shot list before generation unless the user explicitly requests immediate generation.
 
-For game CGs, append a constraint equivalent to:
+Use:
 
-> One complete standalone illustration only. Clean artwork with no text, no dialogue, no captions, no subtitles, no speech bubbles, no UI, no game interface, no manga/comic panels, no collage, no split-screen composition, and no multiple scenes inside the same image.
+### CG [number] — [short title]
+- **Shot function:** what this image contributes to the story
+- **Frozen moment:** exact instant being shown
+- **Shot size:** extreme wide / wide / medium / medium close-up / close-up / extreme close-up / insert
+- **Camera / composition:** angle, placement, foreground/background logic
+- **Visual focus:** what the audience should notice first
+- **Character acting:** posture, gaze, hands, expression
+- **Continuity locks:** face, wardrobe, scene, prop, style
+- **Difference from adjacent shots:** why this does not visually repeat the previous/next CG
+- **Hard constraints:** standalone CG, no text/UI, no panels/collage
 
-Prefer natural visual instructions over keyword soup.
+Then provide the final generation prompt.
 
-## Observable emotion beats abstract emotion
+For a single CG, use the same logic internally but keep the response compact.
 
-Instead of only:
+# Prompt construction
 
+A generation prompt should encode:
+1. use case — clean visual novel CG / game illustration asset
+2. exact frozen moment
+3. character locks
+4. observable action and emotion
+5. setting
+6. shot size and camera logic
+7. subject placement / foreground / background
+8. lighting and atmosphere
+9. continuity constraints
+10. hard output constraints
+
+Prefer drawable cues over abstract emotion.
+
+Instead of:
 > she looks nervous
 
-Prefer drawable cues:
+Prefer:
+> her shoulders are slightly raised, one hand grips her sleeve, and she avoids meeting his eyes
 
-> her shoulders are slightly raised, one hand grips the hem of her sleeve, and she avoids meeting his eyes
+For game CGs, include a hard constraint equivalent to:
 
-Dialogue in the source can guide these cues, but should not appear as text in the image.
+> One complete standalone visual novel CG only. Pure illustration asset. No text, no dialogue, no subtitles, no captions, no speech bubbles, no character nameplates, no UI, no game interface, no HUD, no buttons, no manga/comic panels, no collage, no split screen, no storyboard grid, no contact sheet, and no multiple scenes inside the same image.
 
----
+# Generation behavior
 
-# Sequential-story rules
+## Approval gate
+Treat clear approval such as “approved”, “use this”, “generate it”, “就这样”, “确认”, or “开始出图” as authorization to generate.
 
-For a multi-image visual-novel sequence:
+If the user requests direct generation, perform the director analysis internally and proceed.
 
-- Each frame is a separate file / image result.
-- Each frame contains one coherent frozen moment.
-- Each frame must add new narrative information.
-- Vary shot size and composition intentionally.
-- Keep character identity stable.
-- Keep wardrobe changes chronologically justified.
-- Preserve spatial logic when useful.
-- Let emotional intensity evolve between frames.
-- Avoid six nearly identical talking-head images.
-- Use actions, reactions, objects, reflections, hands, distance, and staging instead of rendering dialogue.
+## Single CG
+Generate one standalone image.
 
-A useful rhythm can be:
+## Multiple CGs
+Generate one separate image result per planned shot.
 
-**establishing CG → interaction CG → detail/reaction CG → event CG**
+## Continuity-heavy sequence
+Prefer sequential generation:
+1. create the strongest anchor image first
+2. check face, wardrobe, environment, and style locks
+3. use the approved/generated anchor as reference when supported
+4. generate the next shot as a new standalone CG
+5. continue through the sequence
 
-Each arrow means a new standalone image, never a multi-panel sheet.
+Do not turn reference images into collage elements or inset panels.
 
----
+# QA after generation
 
-# Default no-text / no-UI policy
+Check every frame for:
+- character identity drift
+- age drift
+- hairstyle / hair color drift
+- wardrobe / accessory drift
+- wrong character count
+- missing key prop
+- wrong location
+- lighting / chronology mismatch
+- emotional mismatch
+- accidental text
+- accidental dialogue box / UI
+- accidental comic-panel or collage structure
 
-For visual novel, Orange-game-style, game CG, or illustrated-story assets, default to **no text and no interface even when the user does not explicitly say so**.
+For sequences, also check:
+- are 3+ consecutive frames visually too similar?
+- are all shots medium distance?
+- are characters always front-facing?
+- did we miss an important insert, reaction, back view, reflection, or environmental shot?
+- did the camera follow the speaker automatically when the listener mattered more?
+- does every frame have a distinct narrative function?
 
-Do not add:
-- subtitles
-- dialogue boxes
-- speech balloons
-- character names
-- captions
-- labels
-- menus
-- buttons
-- HUD
-- textbox frames
-- dialogue history UI
-- decorative typography
-- invented readable signage
-- watermarks
+If one frame is wrong, regenerate only that frame when possible.
 
-Only include visible text if the text itself is a required in-world story prop and the user explicitly wants it visible.
+# Final directing principle
 
----
+The goal is not merely to “illustrate the script.”
 
-# Default single-frame policy
+The goal is to decide, like a director:
 
-For game and visual-novel illustration tasks, default to a **single full-frame CG composition**.
-
-Do not add:
-- comic gutters
-- manga panels
-- multiple panels
-- split screen
-- picture-in-picture
-- inset frames
-- montage strips
-- collage layout
-- contact sheet
-- storyboard page
-- several time moments in one canvas
-
-If a source passage contains multiple beats, either:
-
-1. choose the strongest single beat for one CG, or
-2. propose several CGs and generate them separately.
-
-Never solve narrative complexity by packing multiple scenes into one image unless explicitly requested.
-
----
-
-# Style behavior
-
-If the user specifies a style, follow it consistently.
-
-If no style is specified, default to a polished narrative illustration suitable for a modern visual novel:
-- clearly readable characters
-- expressive but believable acting
-- strong single-frame composition
-- finished background without overwhelming the subject
-- story-first lighting
-- polished CG-like finish
-- no interface elements
-
-Do not force anime aesthetics if the material clearly calls for another visual language.
-
----
-
-# Recommended response patterns
-
-## Before approval — single image
-
-### Scene — [title]
-**Story beat:** ...
-
-**Visual direction:** ...
-
-**Hard constraints:** standalone CG, no text/UI, no panels/collage.
-
-**Generation prompt:** ...
-
-## Before approval — sequence
-
-Give a compact shot list first, then one prompt card per image.
-
-Make it explicit that each item will become a separate image.
-
-## After approval
-
-Generate the images one by one or as separate image-generation results. Do not merge them into a sheet.
-
-Avoid repeating all prompt text unless the user asks to see it again.
-
----
-
-# Quality checklist
-
-Before presenting prompts:
-
-- [ ] Did I preserve every locked story fact?
-- [ ] Is each image one exact frozen moment?
-- [ ] Does the composition communicate the intended beat?
-- [ ] Are recurring details consistent?
-- [ ] Did I explicitly enforce no text / no UI?
-- [ ] Did I explicitly enforce one standalone image per scene?
-- [ ] Are sequence frames meaningfully different?
-
-Before/while generating:
-
-- [ ] Has the user approved, or explicitly requested direct generation?
-- [ ] Am I using the built-in image-generation capability?
-- [ ] Is each requested scene being generated as its own image?
-- [ ] Am I avoiding comic panels, collages, split screens, and storyboards?
-- [ ] Am I avoiding dialogue boxes and visual-novel UI?
-- [ ] For continuity-heavy work, am I using an anchor strategy when possible?
-- [ ] If one frame drifts, can I fix only that frame?
-
----
-
-# Example interpretation
-
-User story:
-
-> A nine-year-old girl is trying on white sneakers in the children's shoe section of a shopping mall. A transparent glitter panel on the side catches the light. She has walked back and forth three times. On the fourth pass, she deliberately rises onto her toes. She looks at herself in the mirror.
-
-Interpretation:
-
-- Locked character: nine-year-old girl
-- Locked location: children's shoe section in a mall
-- Locked footwear: white sneakers with a small transparent glitter panel
-- Required action: looking at the mirror while slightly rising onto her toes
-- Emotional subtext: quiet anticipation / self-conscious interest
-- Useful framing: girl and reflection in the same composition, with the shoes still readable
-- Default hard constraints: one standalone CG, no text, no dialogue, no UI, no speech bubble, no comic panels, no collage, no split screen
-
-Even if the original script contains dialogue such as “Mom,” use that only to infer the emotional beat. Do not draw the word “Mom,” a dialogue box, or a speech balloon.
+**what the audience should look at, how close they should be, what they should notice first, and what should remain unseen in that exact moment.**
 
 ---
 
