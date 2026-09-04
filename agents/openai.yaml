@@ -1,0 +1,8 @@
+interface:
+  display_name: "Visual Novel Illustrator"
+  short_description: "Turn stories into consistent visual-novel illustrations and CG sequences."
+  default_prompt: "Use $visual-novel-illustrator to turn this story or scene into a visual-novel illustration plan, preserve character and scene continuity, show the generation prompt for approval, and then generate the approved image(s) with the built-in image generation capability."
+
+metadata:
+  author: "Turtle Dove (斑鸠)"
+  repository: "https://github.com/banjiu763-cpu/visual-novel-illustrator-skill"
